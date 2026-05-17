@@ -1,26 +1,29 @@
 import { useEffect, useState } from "react"
-import { getRates, getCurrencies } from "./api/currencyApi"
+import { getCurrencies } from "./api/currencyApi"
 import { formatCurrency, calculateReceived } from "./utils"
+import type { CurrencyInfo } from "./types/currencyTypes"
+import { useExchangeRates } from "./hooks/useExchangeRates"
 
 function App() {
 
-  const [rates, setRates] = useState<string>("")
   const [amount, setAmount] = useState("1")
   const [fromCountryCurrency, setFromCountryCurrency] = useState<string>('USD')
   const [toCountryCurrency, setToCountryCurrency] = useState<string>('EUR')
-  const [currencies, setCurrencies] = useState<Record<string, string>>({})
+  const [currencies, setCurrencies] = useState<Record<string, CurrencyInfo>>({})
+
+const {
+    rates,
+    loading,
+    error,
+    retry,
+  } = useExchangeRates(fromCountryCurrency)
 
   useEffect(() => {
     getCurrencies()
       .then(data => setCurrencies(data || {}))
   }, [])
 
-  useEffect(() => {
-    getRates(fromCountryCurrency)
-      .then(data => setRates(data?.rates))
-  }, [fromCountryCurrency])
 
-  console.log(rates)
   return (
     <>
       <input type="text" name="amount" id="" value={formatCurrency(Number(amount))} onChange={(e) => setAmount(e.target.value)} />
