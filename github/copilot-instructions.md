@@ -8,7 +8,7 @@ Before making changes, read:
 - docs/TASKS.md
 - docs/ACCEPTANCE_CRITERIA.md
 - docs/DECISIONS.md
-
+- docs/DESIGN_SPEC.md
 Project rules:
 
 - Use React, Vite, TypeScript, Ant Design and SCSS.
