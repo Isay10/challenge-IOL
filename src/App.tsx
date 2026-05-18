@@ -1,7 +1,12 @@
 import { CurrencyConverter } from './components'
+import { AppLayout } from './layout'
 
 function App() {
-  return <CurrencyConverter />
+  return (
+    <AppLayout>
+      <CurrencyConverter />
+    </AppLayout>
+  )
 }
 
 export default App

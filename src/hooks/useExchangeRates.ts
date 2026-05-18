@@ -7,6 +7,7 @@ export interface UseExchangeRatesReturn {
   loading: boolean
   error: Error | null
   retry: () => void
+  lastUpdatedAt: Date | null
 }
 
 /**
@@ -33,6 +34,7 @@ export function useExchangeRates(baseCurrency: string): UseExchangeRatesReturn {
   const [rates, setRates] = useState<ExchangeRates>({})
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<Error | null>(null)
+  const [lastUpdatedAt, setLastUpdatedAt] = useState<Date | null>(null)
 
   const fetchRates = useCallback(async () => {
     // Check if rates for this currency are already cached
@@ -50,6 +52,7 @@ export function useExchangeRates(baseCurrency: string): UseExchangeRatesReturn {
       const response = await getRates(baseCurrency)
 
       setRates(response.rates)
+      setLastUpdatedAt(new Date())
       // Cache the successful response
       ratesCache.set(baseCurrency, response.rates)
     } catch (err) {
@@ -82,6 +85,7 @@ export function useExchangeRates(baseCurrency: string): UseExchangeRatesReturn {
     loading,
     error,
     retry,
+    lastUpdatedAt,
   }
 }
 

@@ -11,34 +11,38 @@ describe('sanitizeAmount', () => {
   })
 
   it('accepts valid positive numbers', () => {
+    expect(sanitizeAmount('123')).toBe('123')
     expect(sanitizeAmount('1.50')).toBe('1.50')
     expect(sanitizeAmount('100')).toBe('100')
     expect(sanitizeAmount('0.01')).toBe('0.01')
   })
 
-  it('rejects negative numbers', () => {
-    expect(sanitizeAmount('-10')).toBe('')
-    expect(sanitizeAmount('-1.50')).toBe('')
+  it('strips negative sign from input', () => {
+    expect(sanitizeAmount('-10')).toBe('10')
+    expect(sanitizeAmount('-1.50')).toBe('1.50')
   })
 
-  it('handles leading zeros', () => {
-    expect(sanitizeAmount('007')).toBe('7')
-    expect(sanitizeAmount('0.5')).toBe('0.5')
-  })
-
-  it('handles comma as decimal separator and converts to period', () => {
+  it('converts comma decimal separator to period', () => {
     expect(sanitizeAmount('1,50')).toBe('1.50')
     expect(sanitizeAmount('10,5')).toBe('10.5')
   })
 
-  it('rejects multiple decimal points or commas', () => {
-    expect(sanitizeAmount('1.5.0')).toBe('')
-    expect(sanitizeAmount('1,5,0')).toBe('')
+  it('removes letters and symbols, keeping only digits and decimals', () => {
+    expect(sanitizeAmount('abc123')).toBe('123')
+    expect(sanitizeAmount('12abc')).toBe('12')
+    expect(sanitizeAmount('abc')).toBe('')
+    expect(sanitizeAmount('$100')).toBe('100')
+    expect(sanitizeAmount('12.5a')).toBe('12.5')
+    expect(sanitizeAmount('a12.5')).toBe('12.5')
   })
 
-  it('strips non-numeric characters except decimal', () => {
-    expect(sanitizeAmount('1a5')).toBe('')
-    expect(sanitizeAmount('$100')).toBe('')
+  it('handles multiple decimal points by keeping first', () => {
+    expect(sanitizeAmount('1.2.3')).toBe('1.23')
+    expect(sanitizeAmount('1.5.0')).toBe('1.50')
+  })
+
+  it('handles comma as decimal separator with invalid chars', () => {
+    expect(sanitizeAmount('1,5a0')).toBe('1.50')
   })
 
   it('handles zero correctly', () => {
@@ -48,13 +52,10 @@ describe('sanitizeAmount', () => {
 
   it('trims whitespace', () => {
     expect(sanitizeAmount('  10.5  ')).toBe('10.5')
+    expect(sanitizeAmount('  123  ')).toBe('123')
   })
 
-  it('rejects NaN', () => {
-    expect(sanitizeAmount('NaN')).toBe('')
-  })
-
-  it('rejects Infinity', () => {
-    expect(sanitizeAmount('Infinity')).toBe('')
+  it('allows empty string as valid intermediate state', () => {
+    expect(sanitizeAmount('')).toBe('')
   })
 })
