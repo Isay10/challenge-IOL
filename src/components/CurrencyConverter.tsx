@@ -86,6 +86,7 @@ export function CurrencyConverter() {
                 type="text"
                 inputMode="decimal"
                 placeholder="0.00"
+                maxLength={12}
                 value={amount}
                 onChange={handleAmountChange}
                 size="large"
