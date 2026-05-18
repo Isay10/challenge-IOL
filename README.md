@@ -2,349 +2,468 @@
 
 ## Descripción
 
-Calculadora de cambio de divisas construida como challenge técnico frontend para IOL. La aplicación permite a los usuarios convertir entre diferentes monedas utilizando tasas de cambio en tiempo real obtenidas de la API de VATComply.
+Calculadora de cambio de divisas construida con React como parte del challenge técnico frontend para IOL.
 
-La aplicación demuestra decisiones arquitectónicas intentionales, separación de responsabilidades, manejo robusto de entrada de datos y buenas prácticas de testing.
+La aplicación permite convertir un monto entre monedas utilizando tasas obtenidas desde la API de VATComply. En la primera carga, el monto inicial es `1.00`, la moneda de origen es `USD` y la moneda de destino es `EUR`.
+
+
+---
+
+## Live demo
+
+La aplicación está desplegada y puede probarse en el siguiente enlace:
+
+[Ver demo online](https://iolfrontendchallenge.netlify.app/)
+
+---
 
 ## Funcionalidades principales
 
-- **Conversión en tiempo real**: Ingresa un monto y selecciona las monedas de origen y destino. La conversión se calcula localmente de forma inmediata.
-- **Valores por defecto claros**: En la primera carga, la app muestra 1.00 USD convertido a EUR.
-- **Intercambio de divisas**: Botón para intercambiar rápidamente las monedas de origen y destino.
-- **Símbolo de moneda**: Muestra el símbolo de la moneda seleccionada como prefijo en el campo de entrada.
-- **Validación de entrada robusta**: Los caracteres inválidos se sanitizan silenciosamente. No se permiten valores negativos.
-- **Manejo de estados**: Indicadores visuales claros para loading, error y éxito. Botón de reintento cuando la API falla.
-- **Timestamp de actualización**: Muestra la fecha y hora del último fetch exitoso de tasas.
-- **Diseño responsive**: La UI se adapta a dispositivos móviles, tabletas y desktop.
+- Conversión de divisas usando tasas de VATComply.
+- Monto inicial por defecto: `1.00`.
+- Monedas iniciales por defecto: `USD` como origen y `EUR` como destino.
+- Recálculo automático del monto recibido al modificar el importe.
+- Validación para evitar montos negativos.
+- Sanitización silenciosa de caracteres inválidos.
+- Intercambio rápido entre moneda origen y destino.
+- Visualización de la última actualización exitosa de tasas.
+- Caché en memoria por moneda origen para evitar llamadas repetidas a la API durante la sesión.
+- Estados de carga, error y reintento.
+- Interfaz responsive alineada con la dirección visual propuesta.
+
+---
 
 ## Stack técnico
 
-- **React 18** - Interfaz de usuario
-- **TypeScript** - Tipado estático y seguridad en refactoring
-- **Vite** - Build tool y dev server
-- **Ant Design** - Componentes UI base
-- **SCSS** - Estilos, layout y comportamiento responsive
-- **pnpm** - Gestor de paquetes
-- **Vitest + React Testing Library** - Testing unitario e integración
-- **Fetch API** - Comunicación con API externa
+- React
+- TypeScript
+- Vite
+- pnpm
+- Ant Design
+- SCSS
+- Vitest
+- React Testing Library
+- Fetch API nativa del navegador
+
+---
 
 ## Instalación y ejecución
 
-### Requisitos previos
+### Requisitos
 
-- Node.js 16+ 
-- pnpm 8+
+- Node.js
+- pnpm
 
-### Pasos
+### Instalación
 
 ```bash
-# Clonar o descargar el repositorio
-cd challenge-IOL
-
-# Instalar dependencias
 pnpm install
+```
 
-# Ejecutar en desarrollo (abre http://localhost:5173)
+### Ejecutar en desarrollo
+
+```bash
 pnpm dev
+```
 
-# Ejecutar tests en modo watch
+Por defecto, Vite expone la aplicación en:
+
+```txt
+http://localhost:5173
+```
+
+### Ejecutar tests
+
+```bash
 pnpm test
+```
 
-# Ejecutar tests una sola vez (CI mode)
+Si se desea ejecutar Vitest una sola vez en modo `run`:
+
+```bash
 pnpm test -- --run
+```
 
-# Compilar para producción
+### Generar build productiva
+
+```bash
 pnpm build
+```
 
-# Previsualizar build de producción localmente
+### Previsualizar build
+
+```bash
 pnpm preview
 ```
 
+---
+
 ## Scripts disponibles
 
-| Script | Descripción |
-|--------|-------------|
-| `pnpm dev` | Inicia dev server con hot reload |
-| `pnpm build` | Compila la app para producción en `dist/` |
-| `pnpm preview` | Previsualiza la build en local |
-| `pnpm test` | Ejecuta tests en modo watch |
-| `pnpm test -- --run` | Ejecuta tests una sola vez (CI mode) |
-| `pnpm lint` | Valida con ESLint |
+| Comando | Descripción |
+|---|---|
+| `pnpm dev` | Inicia el servidor de desarrollo con Vite. |
+| `pnpm test` | Ejecuta los tests con Vitest. |
+| `pnpm test -- --run` | Ejecuta los tests una sola vez. |
+| `pnpm build` | Ejecuta TypeScript build y genera la build de Vite. |
+| `pnpm lint` | Ejecuta ESLint sobre el proyecto. |
+| `pnpm preview` | Sirve localmente la build generada. |
 
-## Enfoque de desarrollo: SDD (Spec Driven Development)
+---
 
-Este proyecto utilizó una metodología **Spec Driven Development** ligera:
+## Enfoque de desarrollo: SDD
 
-1. **Especificación de producto** (`docs/PRODUCT_SPEC.md`): Requisitos funcionales, criterios de aceptación y comportamientos esperados definidos antes de la implementación.
+El proyecto se trabajó con un enfoque liviano de **Spec Driven Development**.
 
-2. **Especificación técnica** (`docs/TECH_SPEC.md`): Arquitectura, estructura de componentes, manejo de estado y decisiones técnicas documentadas.
+Antes y durante la implementación se definieron documentos de soporte para mantener el alcance claro, evitar decisiones accidentales y reducir overengineering:
 
-3. **Decisiones** (`docs/DECISIONS.md`): Justificación de cada decisión arquitectónica, alternativas consideradas y trade-offs.
+- Especificación de producto.
+- Especificación técnica.
+- Registro de decisiones.
+- Desglose de tareas.
+- Checklist de validación funcional y manual.
 
-4. **Desglose de tareas** (`docs/TASKS.md`): Tareas atómicas derivadas del spec para facilitar seguimiento y validación incremental.
+Este enfoque permitió separar el problema en decisiones explícitas:
 
-5. **QA manual** (`docs/MANUAL_QA.md`): Checklist de validación funcional para testing manual y UI.
+- Qué comportamiento debía tener la calculadora.
+- Cómo se iba a consumir la API.
+- Cómo se manejaría el input del monto.
+- Qué estados de UI eran necesarios.
+- Qué decisiones visuales aportaban a la experiencia del usuario.
+- Qué quedaba fuera del alcance del challenge.
 
-**Beneficio**: Este enfoque mantuvo el scope claro, evitó overengineering y permitió validar decisiones tempranamente.
+Para una descripción más detallada del proceso y decisiones, ver también:
+
+- `docs/PRODUCT_SPEC.md`
+- `docs/TECH_SPEC.md`
+- `docs/DECISIONS.md`
+- `docs/TASKS.md`
+
+---
 
 ## Uso de herramientas de IA
 
-Las herramientas de IA se utilizaron como **acelerador de desarrollo** en:
+Se utilizaron herramientas de IA como aceleradores de productividad durante el proceso de desarrollo.
 
-- **Planificación y desglose de tareas**: Estructuración de specs y breaking down de requisitos.
-- **Refinamiento de prompts**: Definición clara de requisitos antes de la implementación.
-- **Brainstorming UX**: Generación de ideas sobre layout, componentes y comportamientos.
-- **Creación de checklist de QA**: Identificación de casos de prueba y edge cases.
-- **Generación de código repetitivo**: Scaffolding inicial y funciones utilitarias.
+Su uso estuvo orientado principalmente a:
 
-**Importante**: Las herramientas de IA no reemplazaron la **propiedad técnica**. Todas las decisiones sobre arquitectura, comportamiento de producto, UX y scope fueron revisadas y aprobadas manualmente.
+- Planificación inicial.
+- Desglose de tareas.
+- Refinamiento de prompts y requisitos.
+- Brainstorming de UX.
+- Identificación de casos de QA.
+- Revisión de consistencia entre decisiones y alcance.
+
+La IA no reemplazó la propiedad técnica del proyecto. Las decisiones finales sobre arquitectura, comportamiento de producto, experiencia de usuario y alcance fueron revisadas manualmente.
+
+El objetivo fue usar IA como herramienta de apoyo para acelerar ejecución y análisis, manteniendo criterio técnico sobre qué implementar, qué dejar fuera y cómo justificar cada decisión.
+
+---
 
 ## Decisiones técnicas y trade-offs
 
 ### Vite como build tool
 
 **Qué se decidió:**  
-Usar Vite en lugar de Create React App o webpack.
+Usar Vite como herramienta de build y servidor de desarrollo.
 
 **Por qué sí:**  
-Vite ofrece dev server ultrarápido con HMR nativo, build optimizado, y es la herramienta moderna estándar en React. Tiene excelente soporte para TypeScript y SCSS. La curva de aprendizaje es menor que webpack.
+Vite ofrece una experiencia de desarrollo rápida, configuración simple y buen soporte para React, TypeScript y SCSS. Para un challenge frontend permite enfocarse en el producto sin invertir tiempo innecesario en configuración de build.
 
 **Por qué no:**  
-- Create React App está deprecated y recomienda migraciones.
-- webpack requiere configuración manual compleja para dev experience comparable.
+No se eligió una configuración manual con webpack porque agregaría complejidad sin aportar valor proporcional al alcance. Tampoco se eligió Create React App por estar fuera del estándar moderno recomendado para nuevos proyectos.
 
 **Trade-off:**  
-Vite tiene menos documentación y plugins que webpack. En proyectos empresariales masivos, webpack ofrece más flexibilidad, pero aquí la simplicidad de Vite es una ventaja.
+Vite simplifica mucho el setup, pero en aplicaciones enterprise muy específicas webpack todavía puede ofrecer mayor control fino sobre la configuración.
 
 ---
 
-### Fetch API nativa vs Axios
+### TypeScript para contratos más seguros
 
 **Qué se decidió:**  
-Usar Fetch API nativa con promesas básicas en lugar de Axios.
+Usar TypeScript en toda la aplicación.
 
 **Por qué sí:**  
-Fetch API está disponible en todos los navegadores modernos sin dependencias adicionales. Para este caso de uso (requests simples GET), Fetch es suficiente y más ligero.
+El dominio incluye estructuras de datos externas, monedas, tasas y estados derivados. TypeScript ayuda a documentar contratos, prevenir errores comunes y refactorizar con mayor confianza.
 
 **Por qué no:**  
-- Axios agrega ~13KB gzipped de dependencia innecesaria.
-- React Query / SWR añadirían complejidad innecesaria para una sola fuente de datos externa.
+JavaScript habría sido suficiente para una demo pequeña, pero aumentaría el riesgo de errores silenciosos en transformaciones de datos y manejo de respuestas de API.
 
 **Trade-off:**  
-Fetch requiere manejo manual de errores y retry. En aplicaciones con múltiples fuentes de datos complejas, Axios o React Query serían más prácticos.
+TypeScript agrega una capa de complejidad inicial y requiere mantener tipos actualizados, pero ese costo es bajo frente al beneficio de claridad y seguridad.
 
 ---
 
-### Estado local vs Redux / Context
+### Ant Design como base UI
 
 **Qué se decidió:**  
-Mantener el estado de la moneda y monto dentro del componente `CurrencyConverter` usando `useState` local.
+Usar Ant Design para componentes base.
 
 **Por qué sí:**  
-El estado es simple, no se comparte entre múltiples ramas del árbol. Redux y Context agregarían overhead innecesario. El estado local es más fácil de entender, testear y refactorizar.
+Permite construir una UI consistente rápidamente con componentes probados como inputs, selects, botones, cards, alerts y spinners. Esto permite concentrar el esfuerzo en comportamiento, estado, integración con API y experiencia de usuario.
 
 **Por qué no:**  
-- Redux es overkill para un estado simple y centralizado.
-- Context API introducería un provider wrapper innecesario y riesgo de re-renders globales.
+No se implementó un sistema de diseño desde cero porque no era el objetivo principal del challenge. Tampoco se usó una librería más liviana porque Ant Design resolvía bien la necesidad de velocidad y consistencia visual.
 
 **Trade-off:**  
-Si el estado fuera compartido entre múltiples pantallas o la lógica fuera muy compleja, estado global sería justificado. Acá no lo es.
+Ant Design trae estilos y patrones propios que pueden limitar la personalización fina. Por eso se complementó con SCSS para layout y refinamientos visuales.
 
 ---
 
-### `type="text"` con `inputMode="decimal"` vs `type="number"`
+### SCSS para layout y refinamientos visuales
 
 **Qué se decidió:**  
-Usar `<input type="text" inputMode="decimal" />` en lugar de `type="number"`.
+Usar SCSS para estilos específicos del layout, responsive behavior y ajustes visuales.
 
 **Por qué sí:**  
-- `type="number"` produce comportamiento inconsistente entre navegadores en móvil (algunos no permiten decimales, otros tienen spinner).
-- `type="text"` + `inputMode="decimal"` muestra el teclado numérico correcto en móvil pero permite validación custom y manejo de edge cases.
-- Permite sanitización custom silenciosa de caracteres inválidos.
+SCSS permite mantener estilos organizados y expresivos sin introducir una solución más compleja. Es adecuado para una app pequeña con necesidades claras de layout y responsive design.
 
 **Por qué no:**  
-- `type="number"` es más semántico pero rompe UX en móvil.
+No se usaron CSS-in-JS ni Tailwind porque habrían agregado una decisión adicional de arquitectura visual que no era necesaria para el alcance.
 
 **Trade-off:**  
-Requiere sanitización manual en JavaScript. Para casos simples, `type="number"` sería más fácil, pero acá UX mobile es prioritaria.
+SCSS no encapsula estilos al nivel de algunas soluciones CSS-in-JS, por lo que requiere disciplina en nombres de clases y estructura.
 
 ---
 
-### Sanitización silenciosa vs validación visual
+### Fetch API nativa en lugar de Axios
 
 **Qué se decidió:**  
-Sanitizar caracteres inválidos silenciosamente sin mostrar error visual.
+Usar la Fetch API nativa para consumir VATComply.
 
 **Por qué sí:**  
-La experiencia es más fluida. Si el usuario pega `"1.50abc"`, la app muestra `"1.50"` sin fricciones. Menos mensajes de error = menos cognitivo.
+El proyecto realiza requests públicos simples. Fetch evita agregar una dependencia externa para un caso que el navegador ya resuelve de forma nativa.
 
 **Por qué no:**  
-Un sistema estricto que rechace input podría forzar al usuario a entender límites exactos. Pero esto es fricción innecesaria para una app de conversión simple.
+No se eligió Axios porque sus ventajas —interceptores, configuración global, transformaciones avanzadas, headers compartidos— no eran necesarias para este challenge.
 
 **Trade-off:**  
-El usuario puede no saber exactamente qué caracteres no fueron permitidos. Para formas de registro críticas, validación visual sería mejor.
+Fetch requiere manejar manualmente errores, parsing y algunos casos de red. En una aplicación con muchas integraciones, Axios podría ser más conveniente.
 
 ---
 
-### Fetch de tasas solo al cambiar moneda origen vs auto-refresh
+### Estado local en lugar de Redux o Context
 
 **Qué se decidió:**  
-Fetch de tasas solo cuando el usuario cambia la moneda de origen. Sin auto-refresh.
+Usar estado local de React para manejar monto, monedas seleccionadas y estado derivado del conversor.
 
 **Por qué sí:**  
-Reduce requests a la API. Para un uso típico, las tasas no cambian lo suficientemente rápido como para justificar polling. El usuario que necesita tasas más frescas puede hacer swap manual.
+El estado pertenece a una única feature y no necesita compartirse globalmente. Mantenerlo local reduce complejidad y facilita el razonamiento del componente.
 
 **Por qué no:**  
-Auto-refresh cada X segundos proporcionaría tasas más actualizadas pero causaría tráfico innecesario y batería en móviles.
+Redux sería excesivo para este alcance. Context tampoco aporta demasiado porque el estado del conversor es consumido dentro de una única feature y no necesita compartirse entre componentes lejanos de la aplicación.
 
 **Trade-off:**  
-Las tasas pueden estar ligeramente desactualizadas después de varios minutos de inactividad. Esto es aceptable para una demo.
+Si el producto creciera con múltiples pantallas, historial, favoritos, preferencias persistidas o datos compartidos entre features, podría ser necesario introducir una estrategia de estado más global.
 
 ---
 
-### AppLayout separado de CurrencyConverter
+### No usar React Query
 
 **Qué se decidió:**  
-Separar layout de página (hero, fondo, padding) de la lógica de conversión en componentes separados.
+No incorporar React Query.
 
 **Por qué sí:**  
-Separación de responsabilidades. Si el layout cambia o se reutiliza, no afecta la lógica de conversión. Más fácil de testear y refactorizar.
+La app solo necesita obtener tasas cuando cambia la moneda origen y manejar loading, error, retry y último éxito. Esa lógica es manejable con un hook propio.
 
 **Por qué no:**  
-Para una app de una sola pantalla, esto podría parecer overengineering. Pero demuestra arquitectura escalable.
+React Query sería una buena opción para server state más complejo, cache invalidation avanzada, sincronización en background o múltiples endpoints. En este caso agregaría abstracción innecesaria.
 
 **Trade-off:**  
-Una capa de indirección más. Para una demo, podría estar en un solo componente.
+Se implementa manualmente parte del manejo de estado remoto. Si la integración creciera, React Query podría ser una mejora futura razonable.
 
 ---
 
-### TypeScript vs JavaScript
+### Monto como string en la UI
 
 **Qué se decidió:**  
-Usar TypeScript en lugar de JavaScript puro.
+Representar el monto ingresado como string en la UI.
 
 **Por qué sí:**  
-Typos se detectan tempranamente. Refactoring es más seguro. Contratos de funciones son explícitos. Para aplicaciones que van a crecer, TypeScript vale la pena.
+Durante la edición, el input puede estar en estados intermedios válidos para el usuario pero incómodos como número, por ejemplo `""`, `"."` o `"1."`. Mantenerlo como string permite una experiencia más natural.
 
 **Por qué no:**  
-Agrega complejidad inicial y tiempo de compilación.
+Guardar el monto directamente como number simplificaría el cálculo, pero empeoraría el control del input y podría producir conversiones prematuras o pérdida de intención del usuario.
 
 **Trade-off:**  
-Setup inicial más lento. Para un script de 100 líneas, innecesario. Para una app escalable, imprescindible.
+El cálculo necesita convertir y validar el string antes de operar. Esa complejidad se encapsula en utilidades específicas.
 
 ---
 
-### SCSS vs CSS-in-JS
+### `type="text"` con `inputMode="decimal"`
 
 **Qué se decidió:**  
-Usar SCSS modular (archivos `.scss` por componente) en lugar de styled-components o CSS-in-JS.
+Usar un input de texto con `inputMode="decimal"` para el monto.
 
 **Por qué sí:**  
-SCSS es estándar en la industria. Tooling maduro. Bundling eficiente. Fácil de entender para desarrolladores tradicionales. No agrega dependencias de JS.
+Permite sugerir teclado decimal en mobile y, al mismo tiempo, controlar manualmente sanitización, separadores y estados intermedios del input.
 
 **Por qué no:**  
-CSS-in-JS (styled-components, Emotion) permite co-ubicación de styles y componentes y manejo de tipos. Pero aquí SCSS es suficiente.
+`type="number"` puede tener comportamientos inconsistentes entre navegadores, spinners no deseados y restricciones que afectan la UX al editar decimales.
 
 **Trade-off:**  
-SCSS requiere compilación. CSS-in-JS está disponible directamente en JS. Para componentes altamente reutilizables con muchas variantes, CSS-in-JS sería mejor.
+Se pierde parte de la validación nativa del navegador y se debe implementar sanitización propia.
+
+---
+
+### Sanitización silenciosa y bloqueo de negativos
+
+**Qué se decidió:**  
+Sanitizar caracteres inválidos de forma silenciosa y no permitir valores negativos.
+
+**Por qué sí:**  
+Para una calculadora simple, corregir entradas como caracteres no numéricos sin interrumpir al usuario genera una experiencia más fluida. Los negativos se bloquean porque no tienen sentido para el caso de conversión solicitado.
+
+**Por qué no:**  
+No se eligió mostrar errores por cada carácter inválido porque podría generar ruido visual innecesario.
+
+**Trade-off:**  
+La sanitización silenciosa puede hacer menos explícito qué carácter fue ignorado. En formularios críticos convendría una validación más visible.
+
+---
+
+### Recálculo local y fetch por moneda origen
+
+**Qué se decidió:**  
+Recalcular la conversión localmente cuando cambia el monto o la moneda destino, y pedir nuevas tasas solo cuando cambia la moneda origen.
+
+**Por qué sí:**  
+Las tasas recibidas ya contienen la información necesaria para calcular distintas monedas destino. Esto reduce requests, mejora la respuesta percibida y evita depender de la red para cada cambio de input.
+
+**Por qué no:**  
+No se hace fetch por cada cambio de monto porque sería innecesario: el monto no cambia la tasa de conversión.
+
+**Trade-off:**  
+La app depende de la última respuesta exitosa de tasas para la moneda origen actual.
+
+---
+
+### Caché en memoria por moneda origen
+
+**Qué se decidió:**  
+Implementar un caché en memoria para almacenar las tasas obtenidas exitosamente por moneda origen durante la sesión.
+
+**Por qué sí:**  
+Cuando el usuario cambia entre monedas ya consultadas, la aplicación puede reutilizar las tasas previamente obtenidas sin volver a llamar a la API. Esto mejora la velocidad percibida, evita requests repetidos y mantiene una experiencia más fluida.
+
+**Por qué no:**  
+No se implementó persistencia en `localStorage`, expiración por TTL ni una estrategia avanzada de cache invalidation porque el alcance del challenge no lo requiere. Tampoco se incorporó React Query, ya que la necesidad de server state es limitada y manejable con un hook propio.
+
+**Trade-off:**  
+El caché solo vive durante la sesión actual y se pierde al recargar la página. Además, al no tener expiración automática, puede mantener tasas antiguas si el usuario deja la app abierta mucho tiempo. Para mitigar esto, el usuario puede forzar una nueva carga mediante retry y la app muestra la última actualización exitosa.
+
+---
+
+### Mostrar última actualización sin auto-refresh
+
+**Qué se decidió:**  
+Mostrar la fecha y hora de la última actualización exitosa de tasas, sin implementar auto-refresh.
+
+**Por qué sí:**  
+El timestamp comunica frescura de datos sin generar tráfico automático. Para el alcance del challenge, el usuario no necesita polling constante.
+
+**Por qué no:**  
+No se implementó auto-refresh porque agregaría complejidad de intervalos, sincronización, cleanup, tests con timers y posibles estados inesperados sin un requisito explícito.
+
+**Trade-off:**  
+Si el usuario deja la app abierta mucho tiempo, las tasas pueden quedar desactualizadas hasta que se dispare una nueva carga, se cambie la moneda origen o se utilice retry. Esta decisión evita tráfico automático innecesario y mantiene el control explícito de las llamadas a la API.
+
+---
+
+### Separación entre layout y feature
+
+**Qué se decidió:**  
+Separar el layout general en `AppLayout` y la lógica de conversión en `CurrencyConverter`.
+
+**Por qué sí:**  
+Esta separación mantiene responsabilidades claras: el layout define estructura visual y contexto de página; el conversor concentra comportamiento de negocio y UI específica de la feature.
+
+**Por qué no:**  
+Poner todo en `App` o en un único componente habría sido más rápido, pero menos claro y menos mantenible.
+
+**Trade-off:**  
+Agrega una pequeña capa adicional de componentes, aceptable para mejorar legibilidad y evolución.
+
+---
+
+### Separación pragmática de responsabilidades
+
+**Qué se decidió:**  
+Separar acceso a API, hooks, utilidades, tipos, layout y componentes.
+
+**Por qué sí:**  
+Permite aplicar principios SOLID de forma pragmática: cada módulo tiene una razón principal para cambiar y puede testearse o reemplazarse con menor impacto.
+
+**Por qué no:**  
+No se llevó la arquitectura a un nivel más complejo de capas o dominios porque sería excesivo para una aplicación de una pantalla.
+
+**Trade-off:**  
+Hay más archivos que en una implementación mínima, pero la intención y mantenibilidad quedan más claras.
 
 ---
 
 ## Decisiones UX y visuales
 
-### Hero section con gradiente
+Además de cumplir la consigna funcional, se tomaron decisiones visuales orientadas a mejorar la experiencia de usuario y acercar la app a una herramienta más pulida.
 
-La aplicación incluye una sección hero prominente con gradiente púrpura que comunica marca y propósito claramente. El efecto visual crea jerarquía y atrae atención sin ser invasivo.
+- **Hero section:** introduce el propósito de la herramienta y da contexto antes del formulario.
+- **Card centrada:** concentra la atención en la acción principal: convertir.
+- **Prefijo con símbolo de moneda:** refuerza qué moneda está ingresando el usuario. Si el símbolo no está disponible, se utiliza el código de moneda como fallback.
+- **Swap visible:** permite alternar origen y destino sin reconfigurar selects manualmente.
+- **Estados de loading, error y retry:** hacen explícito el estado de la integración con VATComply.
+- **Última actualización:** ayuda a transmitir confianza sobre la frescura de los datos.
+- **Responsive behavior:** prioriza legibilidad y facilidad de uso en distintos tamaños de pantalla.
 
-### Tarjeta de conversor elevada
-
-La tarjeta blanca del conversor se superpone sobre el hero (margen negativo) creando profundidad visual y focal point claro. Esto sigue patrones modernos de SaaS.
-
-### Símbolo de moneda como prefijo
-
-El campo de monto muestra el símbolo ISO de la moneda seleccionada como prefijo, brindando contexto inmediato sin necesidad de buscar.
-
-### Timestamp de actualización
-
-Mostrar "Last updated: ..." en la caja de resultado comunica al usuario cuán frescas son las tasas, generando confianza.
-
-### Estados claros: Loading, Error, Success
-
-- **Loading**: Spinner centrado durante fetch.
-- **Error**: Alert rojo con mensaje descriptivo y botón Retry.
-- **Success**: Resultado visible con tasa de conversión.
-
-Esto reduce incertidumbre del usuario.
-
-### Responsive mobile-first
-
-En móviles:
-- Controles en una columna en lugar de fila.
-- Botón de swap se convierte en ancho completo.
-- Fuentes más pequeñas pero aún legibles.
-- Hero más compacto.
-
-## Testing y QA
-
-### Cobertura de testing
-
-- **Utilities**: `sanitizeAmount()`, `calculateReceived()`, `formatCurrency()` - 100% coverage.
-- **Hooks**: `useExchangeRates()` - validación de caching, error handling, retry.
-- **Integración**: Casos de uso end-to-end en el componente `CurrencyConverter`.
-
-### Casos de prueba validados
-
-- Conversión correcta con diferentes pares de monedas.
-- Entrada de monto con caracteres inválidos se sanitiza.
-- Valores negativos se rechazan.
-- Intercambio de monedas funciona correctamente.
-- Estados de error y retry se muestran.
-- Caching de tasas previene requests duplicados.
-- La app inicia con valores por defecto correctos.
-
-### Testing manual
-
-Ver `docs/MANUAL_QA.md` para checklist de validación funcional y UI.
-
-## Alcance y mejoras futuras
-
-### No implementado (fuera de scope)
-
-- ❌ Historial de conversiones
-- ❌ Modo oscuro
-- ❌ Internacionalización (i18n)
-- ❌ Redux / state management global
-- ❌ Persistencia de conversiones en localStorage
-- ❌ GraphQL
-- ❌ Autenticación
-- ❌ Auto-refresh de tasas
-
-### Mejoras potenciales futuras
-
-- 📈 Gráfico de tendencias de tasa histórica.
-- 🔔 Notificaciones de cambios de tasa significativos.
-- 💾 Guardar pares de monedas favoritas.
-- 🌙 Soporte de tema oscuro.
-- 🌍 Soporte de idiomas múltiples.
-- 📱 Progressive Web App (offline, installable).
-- ♿ Auditoría de accesibilidad WCAG.
-
-### Notas de producción
-
-Esta aplicación fue construida como **demo técnica**, no como producto en producción. Para llevar a producción:
-
-- Reemplazar VATComply con API de tasas de cambio autorizada en producción.
-- Implementar rate limiting y caché en backend.
-- Añadir logging y monitoring de errores.
-- Realizar pruebas de seguridad y performance.
-- Auditoría de accesibilidad.
-- Testing de múltiples navegadores y dispositivos.
-- Documentation de API.
+El objetivo no fue sobrediseñar el challenge, sino mejorar claridad, confianza y usabilidad sin desviar el alcance técnico.
 
 ---
 
-## Contacto y preguntas
+## Testing y QA
 
-Para preguntas sobre decisiones de arquitectura, ver `docs/DECISIONS.md`.  
-Para preguntas sobre especificación de producto, ver `docs/PRODUCT_SPEC.md`.  
-Para preguntas sobre especificación técnica, ver `docs/TECH_SPEC.md`.
+El proyecto incluye tests automatizados con Vitest y React Testing Library para validar lógica crítica y comportamiento de la feature.
+
+Áreas principales contempladas:
+
+- Sanitización del monto.
+- Cálculo de conversión.
+- Formateo de importes.
+- Comportamiento del conversor en los flujos principales.
+- Manejo de estados de carga, error y reintento cuando corresponde.
+
+Comando principal:
+
+```bash
+pnpm test
+```
+
+También se definieron criterios de aceptación y checklist manual para validar:
+
+- Carga inicial con `1.00`, `USD` y `EUR`.
+- Conversión automática al editar el monto.
+- Bloqueo de valores negativos.
+- Sanitización de caracteres inválidos.
+- Swap entre monedas.
+- Estados visuales ante carga y error.
+- Visualización de última actualización exitosa.
+- Comportamiento responsive.
+- Ausencia de `NaN` o `undefined` en la UI.
+- Uso eficiente de la API, evitando requests por cada cambio de monto.
+- Validación manual de que el caché evita requests repetidos para monedas ya consultadas.
+
+
+---
+
+## Alcance y mejoras futuras
+
+Quedaron fuera del alcance inicial, pero podrían considerarse como mejoras futuras:
+
+- Persistir última selección de monedas.
+- Agregar historial de conversiones.
+- Incorporar favoritos o monedas frecuentes.
+- Implementar auto-refresh configurable.
+- Agregar expiración configurable para el caché de tasas.
+- Agregar internacionalización completa.
+- Mejorar accesibilidad con una auditoría dedicada.
+- Evaluar React Query si crecen los casos de server state.
+- Agregar tests end-to-end con herramientas como Playwright o Cypress.
+
