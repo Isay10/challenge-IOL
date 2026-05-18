@@ -67,9 +67,10 @@ export function CurrencyConverter() {
           {error && (
             <Alert
               className="converter-alert"
-              type="error"
-              message="Failed to load exchange rates"
-              description={error.message}
+              type="warning"
+              variant="outlined"
+              title="We couldn't load exchange rates"
+              description="Conversion is temporarily unavailable. Please try again in a few seconds."
               action={
                 <Button size="small" onClick={retry}>
                   Retry
@@ -147,13 +148,21 @@ export function CurrencyConverter() {
                   <div className="result-label">You receive</div>
 
                   <div className="result-value">
-                    {displayReceived}
+                    {error ? (
+                      <span className="unavailable">—</span>
+                    ) : (
+                      displayReceived
+                    )}
                     <span className="currency-code">{toCurrency}</span>
                   </div>
 
                   <div className="result-detail">
-                    {sanitizedAmount &&
-                      `1 ${fromCurrency} = ${displayRate} ${toCurrency}`}
+                    {error ? (
+                      <span className="unavailable-text">Rates unavailable</span>
+                    ) : (
+                      sanitizedAmount &&
+                      `1 ${fromCurrency} = ${displayRate} ${toCurrency}`
+                    )}
                   </div>
                 </div>
 
