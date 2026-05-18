@@ -161,3 +161,11 @@ Avoided dependencies:
 - Storybook
 
 This keeps the project easier to review, run and maintain.
+
+## Amount input behavior
+
+The amount input uses `type="text"` with `inputMode="decimal"` to improve the mobile keyboard experience while keeping full control over the input value.
+
+Invalid characters are sanitized in the input handler. Letters and unsupported symbols are ignored. Commas are normalized to dots to support decimal input for users accustomed to comma decimal separators.
+
+Negative values are not allowed, according to the challenge requirements.

@@ -16,8 +16,7 @@ export function CurrencyConverter() {
   const [fromCurrency, setFromCurrency] = useState(DEFAULT_FROM)
   const [toCurrency, setToCurrency] = useState(DEFAULT_TO)
   const [currencies, setCurrencies] = useState<Record<string, CurrencyInfo>>({})
-
-  const { rates, loading, error, retry } = useExchangeRates(fromCurrency)
+  const { rates, loading, error, retry, lastUpdatedAt } = useExchangeRates(fromCurrency)
 
   useEffect(() => {
     getCurrencies()
@@ -42,7 +41,9 @@ export function CurrencyConverter() {
   const displayRate = formatCurrency(selectedRate)
 
   const handleAmountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setAmount(event.target.value)
+    const rawValue = event.target.value
+    const sanitized = sanitizeAmount(rawValue)
+    setAmount(sanitized)
   }
 
   const handleSwap = () => {
@@ -51,126 +52,130 @@ export function CurrencyConverter() {
   }
 
   return (
-    <main className="currency-converter-page">
-      <section className="converter-hero">
-        <div className="converter-hero__content">
-          <p className="converter-hero__eyebrow">Currency exchange calculator</p>
-          <h1 className="converter-hero__title">Convert currencies in real time</h1>
-          <p className="converter-hero__description">
-            Enter an amount, choose your currencies and get an estimated exchange value.
-          </p>
+    <Card className="converter-card">
+      {error && (
+        <Alert
+          className="converter-alert"
+          type="error"
+          variant="outlined"
+          title="We couldn't load exchange rates"
+          description="Conversion is temporarily unavailable. Please try again in a few seconds."
+          action={
+            <Button size="small" onClick={retry} danger>
+              Retry
+            </Button>
+          }
+          showIcon
+        />
+      )}
+
+      {loading && !error ? (
+        <div className="spinner-container">
+          <Spin size="large" />
         </div>
-      </section>
+      ) : (
+        <>
+          <Flex gap="middle" className="controls-flex">
+            <Flex vertical gap="small" className="control-input">
+              <label className="control-label" htmlFor="amount">
+                Amount
+              </label>
+              <Input
+              autoFocus
+                id="amount"
+                type="text"
+                inputMode="decimal"
+                placeholder="0.00"
+                value={amount}
+                onChange={handleAmountChange}
+                size="large"
+                prefix={currencies[fromCurrency]?.currency_symbol || fromCurrency}
+              />
+            </Flex>
 
-      <section className="converter-content">
-        <Card className="converter-card">
-          {error && (
-            <Alert
-              className="converter-alert"
-              type="error"
-              message="Failed to load exchange rates"
-              description={error.message}
-              action={
-                <Button size="small" onClick={retry}>
-                  Retry
-                </Button>
-              }
-              showIcon
+            <Flex vertical gap="small" className="control-input">
+              <label className="control-label" htmlFor="from-currency">
+                From
+              </label>
+              <Select
+                id="from-currency"
+                value={fromCurrency}
+                onChange={setFromCurrency}
+                size="large"
+                options={currencyOptions}
+                showSearch
+              />
+            </Flex>
+
+            <Button
+              type="primary"
+              shape="circle"
+              icon={<SwapOutlined />}
+              onClick={handleSwap}
+              size="large"
+              aria-label="Swap currencies"
+              className="swap-button"
             />
-          )}
 
-          {loading && !error ? (
-            <div className="spinner-container">
-              <Spin size="large" />
+            <Flex vertical gap="small" className="control-input">
+              <label className="control-label" htmlFor="to-currency">
+                To
+              </label>
+              <Select
+                id="to-currency"
+                value={toCurrency}
+                onChange={setToCurrency}
+                size="large"
+                options={currencyOptions}
+                showSearch
+              />
+            </Flex>
+          </Flex>
+
+          <Flex gap="large" className="result-flex">
+            <div className="result-block">
+              <div className="result-label">You receive</div>
+
+              <div className="result-value">
+                {error ? (
+                  <span className="unavailable">—</span>
+                ) : (
+                  displayReceived
+                )}
+                <span className="currency-code">{toCurrency}</span>
+              </div>
+
+              <div className="result-detail">
+                {error ? (
+                  <span className="unavailable-text">Rates unavailable</span>
+                ) : (
+                  sanitizedAmount &&
+                  `1 ${fromCurrency} = ${displayRate} ${toCurrency}`
+                )}
+              </div>
+              <div className="converter-footer">
+
+
+  <span>
+    {lastUpdatedAt
+      ? `Last updated: ${lastUpdatedAt.toLocaleString()}`
+      : 'Rates not loaded yet'}
+  </span>
+</div>
             </div>
-          ) : (
-            <>
-              <Flex gap="middle" className="controls-flex">
-                <Flex vertical gap="small" className="control-input">
-                  <label className="control-label" htmlFor="amount">
-                    Amount
-                  </label>
-                  <Input
-                    id="amount"
-                    type="text"
-                    inputMode="decimal"
-                    placeholder="0.00"
-                    value={amount}
-                    onChange={handleAmountChange}
-                    size="large"
-                  />
-                </Flex>
 
-                <Flex vertical gap="small" className="control-input">
-                  <label className="control-label" htmlFor="from-currency">
-                    From
-                  </label>
-                  <Select
-                    id="from-currency"
-                    value={fromCurrency}
-                    onChange={setFromCurrency}
-                    size="large"
-                    options={currencyOptions}
-                    showSearch
-                    optionFilterProp="label"
-                  />
-                </Flex>
-
-                <Button
-                  type="primary"
-                  shape="circle"
-                  icon={<SwapOutlined />}
-                  onClick={handleSwap}
-                  size="large"
-                  aria-label="Swap currencies"
-                  className="swap-button"
-                />
-
-                <Flex vertical gap="small" className="control-input">
-                  <label className="control-label" htmlFor="to-currency">
-                    To
-                  </label>
-                  <Select
-                    id="to-currency"
-                    value={toCurrency}
-                    onChange={setToCurrency}
-                    size="large"
-                    options={currencyOptions}
-                    showSearch
-                    optionFilterProp="label"
-                  />
-                </Flex>
-              </Flex>
-
-              <Flex gap="large" className="result-flex">
-                <div className="result-block">
-                  <div className="result-label">You receive</div>
-
-                  <div className="result-value">
-                    {displayReceived}
-                    <span className="currency-code">{toCurrency}</span>
-                  </div>
-
-                  <div className="result-detail">
-                    {sanitizedAmount &&
-                      `1 ${fromCurrency} = ${displayRate} ${toCurrency}`}
-                  </div>
-                </div>
-
-                <div className="info-box">
-                  <div className="info-title">Information</div>
-                  <div className="info-content">
-                    Rates are sourced from VATComply. Exchange rates update when
-                    you change the source currency. Amounts are calculated locally
-                    in real time.
-                  </div>
-                </div>
-              </Flex>
-            </>
-          )}
-        </Card>
-      </section>
-    </main>
+            <div className="info-box">
+              <div className="info-title">Information</div>
+              <div className="info-content">
+                Rates are sourced from VATComply. Exchange rates update when
+                you change the source currency. Amounts are calculated locally
+                in real time.
+              </div>
+            </div>
+          </Flex>
+        </>
+      )}
+    </Card>
   )
 }
 
